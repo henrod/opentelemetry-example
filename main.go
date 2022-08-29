@@ -25,8 +25,19 @@ func run() error {
 }
 
 func main() {
-	err := run()
+	closeTracer, err := ConfigureTracer()
 	if err != nil {
 		panic(err)
+	}
+	defer func() {
+		err = closeTracer()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	err = run()
+	if err != nil {
+		log.Fatal(err)
 	}
 }

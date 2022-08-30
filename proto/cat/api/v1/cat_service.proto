@@ -7,12 +7,6 @@ option go_package = "github.com/Henrod/opentelemetry-example/proto/cat/api/v1";
 import "google/api/annotations.proto";
 
 service CatService {
-  rpc GetFact(GetFactRequest) returns (GetFactResponse) {
-    option (google.api.http) = {
-      get: "/v1/cats/-/fact"
-    };
-  }
-
   rpc CreateCat(CreateCatRequest) returns (CreateCatResponse) {
     option (google.api.http) = {
       post: "/v1/cats"
@@ -25,12 +19,6 @@ service CatService {
       get: "/v1/cats"
     };
   }
-}
-
-message GetFactRequest {}
-
-message GetFactResponse {
-  string fact = 1;
 }
 
 message CreateCatRequest {
@@ -50,4 +38,5 @@ message ListCatsResponse {
 message Cat {
   string id = 1;
   string name = 2;
+  string fact = 3;
 }

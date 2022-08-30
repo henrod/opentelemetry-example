@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CatServiceClient interface {
-	GetFact(ctx context.Context, in *GetFactRequest, opts ...grpc.CallOption) (*GetFactResponse, error)
 	CreateCat(ctx context.Context, in *CreateCatRequest, opts ...grpc.CallOption) (*CreateCatResponse, error)
 	ListCats(ctx context.Context, in *ListCatsRequest, opts ...grpc.CallOption) (*ListCatsResponse, error)
 }
@@ -33,15 +32,6 @@ type catServiceClient struct {
 
 func NewCatServiceClient(cc grpc.ClientConnInterface) CatServiceClient {
 	return &catServiceClient{cc}
-}
-
-func (c *catServiceClient) GetFact(ctx context.Context, in *GetFactRequest, opts ...grpc.CallOption) (*GetFactResponse, error) {
-	out := new(GetFactResponse)
-	err := c.cc.Invoke(ctx, "/api.v1.CatService/GetFact", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *catServiceClient) CreateCat(ctx context.Context, in *CreateCatRequest, opts ...grpc.CallOption) (*CreateCatResponse, error) {
@@ -66,7 +56,6 @@ func (c *catServiceClient) ListCats(ctx context.Context, in *ListCatsRequest, op
 // All implementations should embed UnimplementedCatServiceServer
 // for forward compatibility
 type CatServiceServer interface {
-	GetFact(context.Context, *GetFactRequest) (*GetFactResponse, error)
 	CreateCat(context.Context, *CreateCatRequest) (*CreateCatResponse, error)
 	ListCats(context.Context, *ListCatsRequest) (*ListCatsResponse, error)
 }
@@ -75,9 +64,6 @@ type CatServiceServer interface {
 type UnimplementedCatServiceServer struct {
 }
 
-func (UnimplementedCatServiceServer) GetFact(context.Context, *GetFactRequest) (*GetFactResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetFact not implemented")
-}
 func (UnimplementedCatServiceServer) CreateCat(context.Context, *CreateCatRequest) (*CreateCatResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCat not implemented")
 }
@@ -94,24 +80,6 @@ type UnsafeCatServiceServer interface {
 
 func RegisterCatServiceServer(s grpc.ServiceRegistrar, srv CatServiceServer) {
 	s.RegisterService(&CatService_ServiceDesc, srv)
-}
-
-func _CatService_GetFact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFactRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CatServiceServer).GetFact(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.v1.CatService/GetFact",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CatServiceServer).GetFact(ctx, req.(*GetFactRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _CatService_CreateCat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -157,10 +125,6 @@ var CatService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "api.v1.CatService",
 	HandlerType: (*CatServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetFact",
-			Handler:    _CatService_GetFact_Handler,
-		},
 		{
 			MethodName: "CreateCat",
 			Handler:    _CatService_CreateCat_Handler,

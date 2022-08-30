@@ -67,28 +67,6 @@
           "CatService"
         ]
       }
-    },
-    "/v1/cats/-/fact": {
-      "get": {
-        "operationId": "CatService_GetFact",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetFactResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "CatService"
-        ]
-      }
     }
   },
   "definitions": {
@@ -127,6 +105,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "fact": {
+          "type": "string"
         }
       }
     },
@@ -135,14 +116,6 @@
       "properties": {
         "cat": {
           "$ref": "#/definitions/v1Cat"
-        }
-      }
-    },
-    "v1GetFactResponse": {
-      "type": "object",
-      "properties": {
-        "fact": {
-          "type": "string"
         }
       }
     },

@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"net/http"
+	httpGateway "opentelemetry-example/gateway/http"
 	"opentelemetry-example/gateway/postgres"
 	proto "opentelemetry-example/protogen/go/api/v1"
 	api "opentelemetry-example/service/api/v1"
-
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
@@ -51,7 +49,7 @@ func getCatService() (*api.CatService, error) {
 		return nil, fmt.Errorf("failed to build postgres gateway: %w", err)
 	}
 
-	httpClient := &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
+	httpClient := httpGateway.GetHTTPClient()
 
 	catService, err := api.NewCatService(httpClient, storageGateway)
 	if err != nil {

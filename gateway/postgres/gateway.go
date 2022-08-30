@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"opentelemetry-example/domain/entities"
 
+	"github.com/go-pg/pg/extra/pgotel/v10"
 	"github.com/go-pg/pg/v10"
 )
 
@@ -18,9 +19,21 @@ func NewGateway(postgresURL string) (*Gateway, error) {
 		return nil, fmt.Errorf("failed to parse postgres URL: %w", err)
 	}
 
+	db := pg.Connect(options)
+	db.AddQueryHook(pgotel.NewTracingHook())
+
 	return &Gateway{
-		postgres: pg.Connect(options),
+		postgres: db,
 	}, nil
+}
+
+func getPostgresClient(options *pg.Options) *pg.DB {
+	db := pg.Connect(options)
+
+	// Add tracer
+	db.AddQueryHook(pgotel.NewTracingHook())
+
+	return db
 }
 
 func (gateway *Gateway) CreateCat(ctx context.Context, cat *entities.Cat) error {

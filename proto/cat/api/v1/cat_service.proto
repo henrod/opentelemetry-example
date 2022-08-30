@@ -12,10 +12,42 @@ service CatService {
       get: "/v1/cats/-/fact"
     };
   }
+
+  rpc CreateCat(CreateCatRequest) returns (CreateCatResponse) {
+    option (google.api.http) = {
+      post: "/v1/cats"
+      body: "cat"
+    };
+  }
+
+  rpc ListCats(ListCatsRequest) returns (ListCatsResponse) {
+    option (google.api.http) = {
+      get: "/v1/cats"
+    };
+  }
 }
 
 message GetFactRequest {}
 
 message GetFactResponse {
   string fact = 1;
+}
+
+message CreateCatRequest {
+  Cat cat = 1;
+}
+
+message CreateCatResponse {
+  Cat cat = 1;
+}
+
+message ListCatsRequest {}
+
+message ListCatsResponse {
+  repeated Cat cats = 1;
+}
+
+message Cat {
+  string id = 1;
+  string name = 2;
 }

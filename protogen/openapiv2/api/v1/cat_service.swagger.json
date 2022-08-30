@@ -16,6 +16,58 @@
     "application/json"
   ],
   "paths": {
+    "/v1/cats": {
+      "get": {
+        "operationId": "CatService_ListCats",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCatsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "CatService"
+        ]
+      },
+      "post": {
+        "operationId": "CatService_CreateCat",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCatResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1Cat"
+            }
+          }
+        ],
+        "tags": [
+          "CatService"
+        ]
+      }
+    },
     "/v1/cats/-/fact": {
       "get": {
         "operationId": "CatService_GetFact",
@@ -67,11 +119,41 @@
         }
       }
     },
+    "v1Cat": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateCatResponse": {
+      "type": "object",
+      "properties": {
+        "cat": {
+          "$ref": "#/definitions/v1Cat"
+        }
+      }
+    },
     "v1GetFactResponse": {
       "type": "object",
       "properties": {
         "fact": {
           "type": "string"
+        }
+      }
+    },
+    "v1ListCatsResponse": {
+      "type": "object",
+      "properties": {
+        "cats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Cat"
+          }
         }
       }
     }

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package api.v1;
+
+option go_package = "github.com/Henrod/opentelemetry-example/proto/cat/api/v1";
+
+import "google/api/annotations.proto";
+
+service CatService {
+  rpc GetFact(GetFactRequest) returns (GetFactResponse) {
+    option (google.api.http) = {
+      get: "/v1/cats/-/fact"
+    };
+  }
+}
+
+message GetFactRequest {}
+
+message GetFactResponse {
+  string fact = 1;
+}

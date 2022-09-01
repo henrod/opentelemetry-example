@@ -5,7 +5,11 @@ import (
 	"errors"
 	"fmt"
 	v1 "opentelemetry-example/service/api/v1"
+	"strings"
 	"time"
+
+	"github.com/go-redis/redis/extra/redisotel/v8"
+	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -21,12 +25,26 @@ func NewGateway(redisURL string) (*Gateway, error) {
 		return nil, fmt.Errorf("failed to parse redis url: %w", err)
 	}
 
-	redisClient := redis.NewClient(options)
+	redisClient := getRedisClient(options)
 
 	return &Gateway{
 		redis:      redisClient,
 		expiration: 10 * time.Second,
 	}, nil
+}
+
+func getRedisClient(options *redis.Options) *redis.Client {
+	redisClient := redis.NewClient(options)
+
+	hostPort := strings.Split(options.Addr, ":")
+
+	// Add tracer
+	redisClient.AddHook(redisotel.NewTracingHook(redisotel.WithAttributes(
+		semconv.NetPeerNameKey.String(hostPort[0]),
+		semconv.NetPeerPortKey.String(hostPort[1])),
+	))
+
+	return redisClient
 }
 
 func (gateway *Gateway) GetFact(ctx context.Context) (string, error) {

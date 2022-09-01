@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"opentelemetry-example/domain/entities"
+	v1 "opentelemetry-example/service/api/v1"
 
 	"github.com/go-pg/pg/extra/pgotel/v10"
 	"github.com/go-pg/pg/v10"
@@ -19,8 +21,7 @@ func NewGateway(postgresURL string) (*Gateway, error) {
 		return nil, fmt.Errorf("failed to parse postgres URL: %w", err)
 	}
 
-	db := pg.Connect(options)
-	db.AddQueryHook(pgotel.NewTracingHook())
+	db := getPostgresClient(options)
 
 	return &Gateway{
 		postgres: db,
@@ -38,6 +39,12 @@ func getPostgresClient(options *pg.Options) *pg.DB {
 
 func (gateway *Gateway) CreateCat(ctx context.Context, cat *entities.Cat) error {
 	_, err := gateway.postgres.ModelContext(ctx, NewCat(cat)).Insert()
+
+	var pgErr pg.Error
+	if errors.As(err, &pgErr) && pgErr.IntegrityViolation() {
+		return v1.ErrCatAlreadyExists
+	}
+
 	if err != nil {
 		return fmt.Errorf("failed to insert cat into postgres: %w", err)
 	}

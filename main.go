@@ -6,6 +6,7 @@ import (
 	"net"
 	httpGateway "opentelemetry-example/gateway/http"
 	"opentelemetry-example/gateway/postgres"
+	"opentelemetry-example/gateway/redis"
 	proto "opentelemetry-example/protogen/go/api/v1"
 	api "opentelemetry-example/service/api/v1"
 
@@ -17,6 +18,7 @@ import (
 const (
 	grpcServerURL = "127.0.0.1:8080"
 	postgresURL   = "postgresql://postgres:@localhost:5432/postgres?sslmode=disable"
+	redisURL      = "redis://localhost:6379"
 )
 
 func run() error {
@@ -51,7 +53,12 @@ func getCatService() (*api.CatService, error) {
 
 	httpClient := httpGateway.GetHTTPClient()
 
-	catService, err := api.NewCatService(httpClient, storageGateway)
+	cacheGateway, err := redis.NewGateway(redisURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build redis gateway: %w", err)
+	}
+
+	catService, err := api.NewCatService(httpClient, storageGateway, cacheGateway)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create app: %w", err)
 	}

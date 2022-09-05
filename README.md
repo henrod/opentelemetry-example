@@ -25,7 +25,14 @@ make run
 Call the API:
 ```shell
 grpcurl \
-  -d '{ "cat": { "name": "Cat1", "id": "cat1" } }' \
+  -d '{ "cat": { "name": "Tom", "id": "tom" } }' \
+  -plaintext localhost:8080 \
+  api.v1.CatService/CreateCat
+```
+
+```shell
+grpcurl \
+  -d '{ "cat": { "name": "Garfield", "id": "garfield" } }' \
   -plaintext localhost:8080 \
   api.v1.CatService/CreateCat
 ```

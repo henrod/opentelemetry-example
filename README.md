@@ -10,7 +10,7 @@ Write an example on how to use OpenTelemetry with:
 
 ## Running
 
-Start Jaeger:
+Start Jaeger, Postgres and Redis:
 
 ```shell
 make deps

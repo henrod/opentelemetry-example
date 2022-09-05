@@ -22,4 +22,18 @@ Run the application:
 make run
 ```
 
+Call the API:
+```shell
+grpcurl \
+  -d '{ "cat": { "name": "Cat1", "id": "cat1" } }' \
+  -plaintext localhost:8080 \
+  api.v1.CatService/CreateCat
+```
+
+```shell
+grpcurl \
+  -plaintext localhost:8080 \
+  api.v1.CatService/ListCats
+```
+
 Find the traces in [Jaeger UI](http://localhost:16686).

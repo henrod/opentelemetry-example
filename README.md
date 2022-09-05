@@ -22,4 +22,4 @@ Run the application:
 make run
 ```
 
-Find the traces in [Jaeger UI](localhost:16686).
+Find the traces in [Jaeger UI](http://localhost:16686).

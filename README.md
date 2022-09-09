@@ -8,6 +8,8 @@ Write an example on how to use OpenTelemetry with:
 3. Postgres Client
 4. Redis Client
 
+This example consists of a Cat API, where cats are registered along with cat facts.
+
 ## Running
 
 Start Jaeger, Postgres and Redis:
@@ -23,6 +25,8 @@ make run
 ```
 
 Call the API:
+
+Create a cat:
 ```shell
 grpcurl \
   -d '{ "cat": { "name": "Tom", "id": "tom" } }' \
@@ -30,6 +34,7 @@ grpcurl \
   api.v1.CatService/CreateCat
 ```
 
+Create another cat (if within 10s, the same cat fact will be used from cache):
 ```shell
 grpcurl \
   -d '{ "cat": { "name": "Garfield", "id": "garfield" } }' \
@@ -37,6 +42,7 @@ grpcurl \
   api.v1.CatService/CreateCat
 ```
 
+List cats:
 ```shell
 grpcurl \
   -plaintext localhost:8080 \

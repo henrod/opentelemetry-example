@@ -2,6 +2,7 @@ package interceptors
 
 import (
 	"context"
+	"opentelemetry-example/service/api"
 
 	"go.opentelemetry.io/otel/trace"
 
@@ -11,8 +12,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-const requestIDKey = "request.id"
-
 func RequestID(
 	ctx context.Context,
 	req interface{},
@@ -20,7 +19,7 @@ func RequestID(
 	handler grpc.UnaryHandler,
 ) (resp interface{}, err error) {
 	requestID := uuid.New().String()
-	ctx = context.WithValue(ctx, requestIDKey, requestID)
+	ctx = context.WithValue(ctx, api.RequestIDKey, requestID)
 
 	span := trace.SpanFromContext(ctx)
 	if !span.IsRecording() {
@@ -28,7 +27,7 @@ func RequestID(
 	}
 	defer span.End()
 
-	span.SetAttributes(attribute.String(requestIDKey, requestID))
+	span.SetAttributes(attribute.String(api.RequestIDKey, requestID))
 
 	return handler(ctx, req)
 }

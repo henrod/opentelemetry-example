@@ -6,10 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"opentelemetry-example/domain/entities"
 	v1 "opentelemetry-example/protogen/go/api/v1"
+	"opentelemetry-example/service/api"
 
 	"google.golang.org/grpc/status"
 
@@ -35,6 +35,7 @@ func NewCatService(
 }
 
 func (catService *CatService) CreateCat(ctx context.Context, request *v1.CreateCatRequest) (*v1.CreateCatResponse, error) {
+	log := api.Logger(ctx)
 	var err error
 	cat := &entities.Cat{
 		ID:   request.Cat.GetId(),
@@ -49,10 +50,11 @@ func (catService *CatService) CreateCat(ctx context.Context, request *v1.CreateC
 
 	err = catService.storageGateway.CreateCat(ctx, cat)
 	if errors.Is(err, ErrCatAlreadyExists) {
+		log.Debugf("failed to create cat in gateway: %s", err)
 		return nil, status.Errorf(codes.AlreadyExists, "cat already exists: %s", cat.ID)
 	}
 	if err != nil {
-		log.Printf("failed to create cat in gateway: %s", err)
+		log.Errorf("failed to create cat in gateway: %s", err)
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
@@ -68,9 +70,11 @@ func (catService *CatService) CreateCat(ctx context.Context, request *v1.CreateC
 }
 
 func (catService *CatService) ListCats(ctx context.Context, _ *v1.ListCatsRequest) (*v1.ListCatsResponse, error) {
+	log := api.Logger(ctx)
+
 	cats, err := catService.storageGateway.ListCats(ctx)
 	if err != nil {
-		log.Printf("failed to list cats in gateway: %s", err)
+		log.Errorf("failed to list cats in gateway: %s", err)
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
@@ -93,6 +97,8 @@ type CatFact struct {
 }
 
 func (catService *CatService) getAndCacheFact(ctx context.Context) (string, error) {
+	log := api.Logger(ctx)
+
 	fact, err := catService.getFactFromCache(ctx)
 	if err != nil {
 		return "", fmt.Errorf("failed to get fact from cache: %w", err)
@@ -109,7 +115,7 @@ func (catService *CatService) getAndCacheFact(ctx context.Context) (string, erro
 
 	err = catService.cacheGateway.SetFact(ctx, fact)
 	if err != nil {
-		log.Printf("failed to cache fact, continuing: %s", err)
+		log.Errorf("failed to cache fact, continuing: %s", err)
 	}
 
 	return fact, nil

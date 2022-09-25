@@ -16,6 +16,7 @@ Start Jaeger, Postgres and Redis:
 
 ```shell
 make deps
+make migrations
 ```
 
 Run the application:
@@ -49,4 +50,13 @@ grpcurl \
   api.v1.CatService/ListCats
 ```
 
-Find the traces in [Jaeger UI](http://localhost:16686).
+Find the traces in [Jaeger UI](http://localhost:16686):
+
+* List cats
+![List cats](images/jaeger_list_cats.png)
+
+* Create cat
+![Create cat](images/jaeger_create_cat.png)
+
+* Create already existing cat
+![Create already existing cat](images/jaeger_create_duplicate_cat.png)

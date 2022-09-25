@@ -8,6 +8,7 @@ import (
 	"opentelemetry-example/gateway/postgres"
 	"opentelemetry-example/gateway/redis"
 	proto "opentelemetry-example/protogen/go/api/v1"
+	"opentelemetry-example/service/api/interceptors"
 	api "opentelemetry-example/service/api/v1"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -27,7 +28,12 @@ func run() error {
 		return fmt.Errorf("failed to listen on %s: %w", grpcServerURL, err)
 	}
 
-	server := grpc.NewServer(grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()))
+	server := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			otelgrpc.UnaryServerInterceptor(),
+			interceptors.RequestID,
+		),
+	)
 	reflection.Register(server)
 
 	catService, err := getCatService()

@@ -3,6 +3,11 @@ module opentelemetry-example
 go 1.18
 
 require (
+	github.com/go-pg/pg/extra/pgotel/v10 v10.10.6
+	github.com/go-pg/pg/v10 v10.10.6
+	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.34.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.34.0
@@ -20,12 +25,8 @@ require (
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-pg/pg/extra/pgotel/v10 v10.10.6 // indirect
-	github.com/go-pg/pg/v10 v10.10.6 // indirect
 	github.com/go-pg/zerochecker v0.2.0 // indirect
 	github.com/go-redis/redis/extra/rediscmd/v8 v8.11.5 // indirect
-	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5 // indirect
-	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
